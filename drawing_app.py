@@ -18,10 +18,16 @@ def save_as_png():
     print('Saved ' + fileName + '.png')
 
 def erase_mode():
+    erase_button["state"] = 'disabled'
+    pen_button["state"] = 'normal'
+
     t.pencolor('#ffffff')
     t.pensize(10)
 
 def pen_mode():
+    pen_button["state"] = 'disabled'
+    erase_button["state"] = 'normal'
+
     if (user_input_colour.get() != ''):
         update_colour()
     else:
@@ -79,8 +85,10 @@ tk.Label(master = root, text = '#', width = 1).grid(row = 1, column = 0) # # bef
 tk.Entry(master = root, text = user_input_colour, width = 6).grid(row = 1, column = 1) # colour hex entry
 tk.Button(master = root, text = "Update Colour", command = update_colour).grid(row = 1, column = 2) # updates the colour from colour hex entry
 tk.Button(master = root, text = "Clear", command = t.clear).grid(row = 1, column = 3) # clears canvas
-tk.Button(master = root, text = "Erase", command = erase_mode).grid(row = 1, column = 4) # goes into eraser mode
-tk.Button(master = root, text = "Draw", command = pen_mode).grid(row = 1, column = 5) # goes into pen mode
+erase_button = tk.Button(master = root, text = "Erase", command = erase_mode) # goes into eraser mode
+erase_button.grid(row = 1, column = 4)
+pen_button = tk.Button(master = root, text = "Pen", state = 'disabled', command = pen_mode) # goes into pen mode
+pen_button.grid(row = 1, column = 5)
 tk.Entry(master = root, text = user_input_filename, width = 10).grid(row = 1, column = 6) # file name entry
 tk.Button(master = root, text = "Save", command = save_as_png).grid(row = 1, column = 7) # saves the file
 tk.Button(master = root, text = "Exit", command = root.quit).grid(row = 1, column = 8) # exit app
