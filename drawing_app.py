@@ -3,7 +3,6 @@ import tkinter as tk
 from PIL import Image
 
 def save_as_png():
-    # save postscipt image 
     fileName = user_input_filename.get()
     fileName = fileName.strip()
     if fileName == '':
@@ -11,7 +10,7 @@ def save_as_png():
         return
 
     ts = t.getscreen()
-    ts.getcanvas().postscript(file = fileName + ".eps")
+    ts.getcanvas().postscript(file = fileName + ".eps", pageheight = 700, pagewidth = 700) # save postscipt image 
     # use PIL to convert to PNG 
     img = Image.open(fileName + '.eps') 
     img.save(fileName + '.png', 'png') 
@@ -19,6 +18,8 @@ def save_as_png():
     print('Saved ' + fileName + '.png')
 
 def load():
+    t.clear()
+
     fileName = user_input_filename.get()
     fileName = fileName.strip()
 
@@ -33,9 +34,9 @@ def load():
 
     t.penup()
     cords = t.pos()
-    print(cords)
     t.goto(0,0)
     t.showturtle()
+    t.shapesize(1)
     t.stamp()
     t.hideturtle()
     t.goto(cords)
@@ -44,6 +45,17 @@ def load():
         t.pendown()
 
     os.remove(fileName + '.gif')
+
+    print('loaded ' + fileName + '.png')
+
+def pensize_up():
+    size = t.pen()['pensize']
+    t.pensize(size + 1)
+
+def pensize_down():
+    size = t.pen()['pensize']
+    if size != 1:
+        t.pensize(size - 1)
 
 def erase_mode():
     erase_button["state"] = 'disabled'
@@ -70,7 +82,7 @@ def motion(event):
     mouseX = root.winfo_pointerx() - root.winfo_rootx()
     mouseY = root.winfo_pointery() - root.winfo_rooty()
 
-    if (mouseY > 765 or mouseY < 65):
+    if (mouseY > 765 or mouseY < 35):
         return
 
     mouseX -= 450 - 96
@@ -99,7 +111,7 @@ root.bind('<Button 1>', click)
 root.bind('<Motion>', motion)
 
 canvas = tk.Canvas(master = root, width = 700, height = 700)
-canvas.grid(row = 1,columnspan=5)
+canvas.grid(row = 1,columnspan=7)
 
 t = turtle.RawTurtle(canvas)
 t.speed(0)
@@ -113,14 +125,16 @@ user_input_filename = tk.StringVar()
 tk.Label(master = root, text = '#', width = 1).grid(row = 0, column = 0) # # before colour hex entry
 tk.Entry(master = root, text = user_input_colour, width = 6).grid(row = 0, column = 1) # colour hex entry
 tk.Button(master = root, text = "Update Colour", command = update_colour).grid(row = 0, column = 2) # updates the colour from colour hex entry
-tk.Button(master = root, text = "Clear", command = t.clear).grid(row = 0, column = 3) # clears canvas
 erase_button = tk.Button(master = root, text = "Erase", command = erase_mode) # goes into eraser mode
-erase_button.grid(row = 0, column = 4)
+erase_button.grid(row = 0, column = 3)
 pen_button = tk.Button(master = root, text = "Pen", state = 'disabled', command = pen_mode) # goes into pen mode
-pen_button.grid(row = 0, column = 5)
+pen_button.grid(row = 0, column = 4)
+tk.Button(master = root, text = "-", command = pensize_down).grid(row = 0, column = 5)
+tk.Button(master = root, text = "+", command = pensize_up).grid(row = 0, column = 6)
 tk.Entry(master = root, text = user_input_filename, width = 10).grid(row = 2, column = 0) # file name entry
 tk.Button(master = root, text = "Save", command = save_as_png).grid(row = 2, column = 1) # saves the file
 tk.Button(master = root, text = "Load", command = load).grid(row = 2, column = 2) # loads the file
-tk.Button(master = root, text = "Exit", command = root.quit).grid(row = 2, column = 3) # exit app
+tk.Button(master = root, text = "Clear", command = t.clear).grid(row = 2, column = 3) # clears canvas
+tk.Button(master = root, text = "Exit", command = root.quit).grid(row = 2, column = 4) # exit app
 
 root.mainloop()
